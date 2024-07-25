@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=yes">
+    <title>Excel Online Preview</title>
+    <script src="./jszip.min.js"></script>
+    <script src="./docx-preview.min.js"></script>
+</head>
+
+<body style="padding: 0;margin:0;">
+    <div id="container"></div>
+    <button id="fileBtn">选择文件</button>
+    <script>
+        //----------------
+        let fileUrl = ''
+        const fileBtn = document.querySelector('#fileBtn')
+        fileBtn.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.addEventListener('change', (e) => {
+                console.log('e', input.files[0]);
+                fileUrl = URL.createObjectURL(input.files[0])
+                showFile()
+            })
+            input.click()
+        })
+        //--------------
+        const showFile = () => {
+            var xhr = new XMLHttpRequest
+            xhr.onload = function () {
+                docx.renderAsync(xhr.response, document.getElementById("container"), null, {
+                    inWrapper: false
+                }).then(x => console.log("docx: finished"));
+            }
+            xhr.onerror = function () {
+                reject(new TypeError('Local request failed'))
+            }
+            xhr.open('GET', fileUrl)
+            xhr.responseType = "blob";
+            xhr.send(null)
+        }
+
+
+        // const params = new URLSearchParams(window.location.search);
+        // const fileUrl = params.get("file");
+
+        // var xhr = new XMLHttpRequest
+        // xhr.onload = function () {
+        //     docx.renderAsync(xhr.response, document.getElementById("container"), null, {
+        //         inWrapper: false
+        //     }).then(x => console.log("docx: finished"));
+        // }
+        // xhr.onerror = function () {
+        //     reject(new TypeError('Local request failed'))
+        // }
+        // xhr.open('GET', fileUrl)
+        // xhr.responseType = "blob";
+        // xhr.send(null)
+    </script>
+</body>
